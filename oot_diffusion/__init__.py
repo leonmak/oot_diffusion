@@ -27,7 +27,8 @@ class OOTDiffusionModel:
             hg_root=self.hg_root,
             cache_dir=self.cache_dir,
         )
-        self.cmm = ClothesMaskModel(hg_root=self.hg_root, cache_dir=self.cache_dir)
+        self.cmm = ClothesMaskModel(
+            hg_root=self.hg_root, cache_dir=self.cache_dir)
         return self.pipe
 
     def get_pipe(self):
@@ -43,6 +44,7 @@ class OOTDiffusionModel:
         steps: int = 10,
         cfg: float = 2.0,
         num_samples: int = 1,
+        garment_category: str = 'upperbody'
     ):
         return self.generate_static(
             self.get_pipe(),
@@ -54,6 +56,7 @@ class OOTDiffusionModel:
             steps,
             cfg,
             num_samples,
+            garment_category,
         )
 
     @staticmethod
@@ -67,11 +70,12 @@ class OOTDiffusionModel:
         steps: int = 10,
         cfg: float = 2.0,
         num_samples: int = 1,
+        garment_category: str = 'upperbody',
     ):
         if hg_root is None:
             hg_root = DEFAULT_HG_ROOT
 
-        category = "upperbody"
+        category = garment_category
 
         if isinstance(cloth_path, Image.Image):
             cloth_image = cloth_path
