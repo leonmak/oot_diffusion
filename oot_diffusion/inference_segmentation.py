@@ -47,21 +47,22 @@ class ClothesMaskModel:
     def generate(
         self,
         model_path: str | bytes | Path | Image.Image,
+        category: str = 'upperbody',
     ):
         return self.generate_static(
             model_path,
             self.hg_root,
+            category,
         )
 
     @staticmethod
     def generate_static(
         model_path: str | bytes | Path | Image.Image,
         hg_root: str = None,
+        category: str = 'upperbody',
     ):
         if hg_root is None:
             hg_root = DEFAULT_HG_ROOT
-
-        category = "upperbody"
 
         if isinstance(model_path, Image.Image):
             model_image = model_path
@@ -73,11 +74,13 @@ class ClothesMaskModel:
         start_model_parse = time.perf_counter()
 
         model_parse, face_mask = Parsing(
-            torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu"),
+            torch.device("cuda") if torch.cuda.is_available(
+            ) else torch.device("cpu"),
             hg_root,
         )(model_image)
         end_model_parse = time.perf_counter()
-        print(f"Model parse in {end_model_parse - start_model_parse:.2f} seconds.")
+        print(f"Model parse in {end_model_parse -
+              start_model_parse:.2f} seconds.")
         start_open_pose = time.perf_counter()
 
         keypoints = OpenPose(hg_root)(model_image)

@@ -53,6 +53,7 @@ class OOTDiffusionWithMaskModel:
         steps: int = 10,
         cfg: float = 2.0,
         num_samples: int = 1,
+        category: str = 'upperbody',
     ) -> list[Image.Image]:
         return self.generate_static(
             self.get_pipe(),
@@ -64,6 +65,7 @@ class OOTDiffusionWithMaskModel:
             steps,
             cfg,
             num_samples,
+            category,
         )
 
     @staticmethod
@@ -77,11 +79,10 @@ class OOTDiffusionWithMaskModel:
         steps: int = 10,
         cfg: float = 2.0,
         num_samples: int = 1,
+        category: str = 'upperbody',
     ) -> list[Image.Image]:
         if hg_root is None:
             hg_root = DEFAULT_HG_ROOT
-
-        category = "upperbody"
 
         if isinstance(cloth_path, Image.Image):
             cloth_image = cloth_path
@@ -117,7 +118,8 @@ class OOTDiffusionWithMaskModel:
         )
 
         # Composite the images together using the binary mask as the alpha mask
-        masked_vton_img = Image.composite(gray_rgba, original_rgba, model_mask_image)
+        masked_vton_img = Image.composite(
+            gray_rgba, original_rgba, model_mask_image)
         masked_vton_img = masked_vton_img.convert("RGB")
 
         images = pipe(
