@@ -79,8 +79,8 @@ class ClothesMaskModel:
             hg_root,
         )(model_image)
         end_model_parse = time.perf_counter()
-        print(f"Model parse in {end_model_parse -
-              start_model_parse:.2f} seconds.")
+        t = end_model_parse - start_model_parse
+        print(f"Model parse in {t:.2f} seconds.")
         start_open_pose = time.perf_counter()
 
         keypoints = OpenPose(hg_root)(model_image)
