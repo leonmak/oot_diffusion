@@ -118,7 +118,7 @@ class OOTDiffusionWithMaskModel:
         )
 
         # Composite the images together using the binary mask as the alpha mask
-        print(gray_rgba.size, original_rgba.size, model_mask_image.size)
+        print(gray_rgba.shape, original_rgba.shape, model_mask_image.shape)
         masked_vton_img = Image.composite(
             gray_rgba, original_rgba, model_mask_image)
         masked_vton_img = masked_vton_img.convert("RGB")
