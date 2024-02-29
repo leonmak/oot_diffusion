@@ -99,7 +99,8 @@ class OOTDiffusionWithMaskModel:
 
         model_image = resize_crop_center(model_image, 768, 1024)
         cloth_image = resize_crop_center(cloth_image, 768, 1024)
-        model_mask_image = model_mask_image.resize((768, 1024), Image.LANCZOS)
+        model_mask_image = model_mask_image.resize(
+            (768, 1024), Image.LANCZOS).convert("RGBA")
 
         gray_image = Image.new("L", model_image.size, 127)
         # Create an RGBA version of the original image
@@ -118,6 +119,7 @@ class OOTDiffusionWithMaskModel:
         )
 
         # Composite the images together using the binary mask as the alpha mask
+        print(gray_rgba.size, original_rgba.size, model_mask_image.size)
         masked_vton_img = Image.composite(
             gray_rgba, original_rgba, model_mask_image)
         masked_vton_img = masked_vton_img.convert("RGB")
