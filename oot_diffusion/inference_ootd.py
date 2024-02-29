@@ -1,3 +1,6 @@
+from .pipelines_ootd.unet_vton_2d_condition import UNetVton2DConditionModel
+from .pipelines_ootd.unet_garm_2d_condition import UNetGarm2DConditionModel
+from .pipelines_ootd.pipeline_ootd import OotdPipeline
 import random
 import sys
 import time
@@ -18,10 +21,6 @@ from . import pipelines_ootd
 #! Necessary for OotdPipeline.from_pretrained
 sys.modules["pipelines_ootd"] = pipelines_ootd
 
-from .pipelines_ootd.pipeline_ootd import OotdPipeline
-from .pipelines_ootd.unet_garm_2d_condition import UNetGarm2DConditionModel
-from .pipelines_ootd.unet_vton_2d_condition import UNetVton2DConditionModel
-
 
 class OOTDiffusion:
     def __init__(self, hg_root: str, model_type: str = "hd", cache_dir: str = None):
@@ -30,7 +29,8 @@ class OOTDiffusion:
         self.cache_dir = cache_dir
 
         if model_type not in ("hd", "dc"):
-            raise ValueError(f"model_type must be 'hd' or 'dc', got {model_type!r}")
+            raise ValueError(
+                f"model_type must be 'hd' or 'dc', got {model_type!r}")
 
         self.model_type = model_type
 
@@ -130,9 +130,11 @@ class OOTDiffusion:
             prompt_image = self.auto_processor(
                 images=image_garm, return_tensors="pt"
             ).to(self.device)
+            print("Auto processor")
             prompt_image = self.image_encoder(
                 prompt_image.data["pixel_values"]
             ).image_embeds
+            print("image_encoder", self.model_type)
             prompt_image = prompt_image.unsqueeze(1)
             if self.model_type == "hd":
                 prompt_embeds = self.text_encoder(
@@ -146,7 +148,7 @@ class OOTDiffusion:
                 prompt_embeds = torch.cat([prompt_embeds, prompt_image], dim=1)
             else:
                 raise ValueError("model_type must be 'hd' or 'dc'!")
-
+            print('promt_embeds')
             images = self.pipe(
                 prompt_embeds=prompt_embeds,
                 image_garm=image_garm,
@@ -158,5 +160,5 @@ class OOTDiffusion:
                 num_images_per_prompt=num_samples,
                 generator=generator,
             ).images
-
+            print('done')
         return images
